@@ -1,2 +1,3 @@
-# Leetcode-solutions
-LeetCode solutions (Python) — clean, tested, and well-documented daily practice.
+# LeetCode Solutions (Topic-based)
+
+Organized LeetCode practice by topic/pattern — clean, tested, and well-documented.
