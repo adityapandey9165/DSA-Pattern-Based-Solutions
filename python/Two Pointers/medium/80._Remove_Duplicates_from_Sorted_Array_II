@@ -1,0 +1,80 @@
+"""
+LeetCode: 80. Remove Duplicates from Sorted Array II (Medium)
+Problem link: https://leetcode.com/problems/remove-duplicates-from-sorted-array-ii/
+Author: Aditya Pandey
+Date: 2025-09-04
+
+Problem:
+Given a sorted array nums, remove duplicates in-place such that duplicates are allowed at most twice.
+Return the new length k and ensure the first k elements of nums contain the final result.
+
+Pattern: Two Pointers (Slow / Fast) — In-place overwrite with allowed count
+
+Approach:
+- Use a write pointer `k` which points to the next position to write a valid element.
+- Iterate through each element `x` in nums (fast pointer behavior).
+- We allow a number to be written if we have written fewer than 2 elements so far
+  (k < 2), or if the current number `x` is different from the element at `nums[k-2]`.
+  The check `x != nums[k-2]` ensures we don't allow more than 2 copies.
+- Write `x` to `nums[k]` and increment `k` when allowed.
+- At the end, first `k` elements are the result.
+
+Time Complexity: O(n) — single pass.
+Space Complexity: O(1) — in-place, constant extra space.
+
+Common Mistakes:
+- Using extra data structures (sets/lists) which breaks O(1) space requirement.
+- Off-by-one errors when checking `nums[k-2]` (ensure k >= 2 before accessing).
+- Overwriting incorrectly by iterating with k and i in the wrong directions.
+
+Example Walkthrough:
+nums = [1,1,1,2,2,3]
+k = 0
+
+x=1 -> k<=1 -> write 1 at nums[0], k=1 -> [1,1,1,2,2,3]
+x=1 -> k<=1 -> write 1 at nums[1], k=2 -> [1,1,1,2,2,3]
+x=1 -> k>1 and nums[k-2] == nums[0] == 1 -> skip (would be 3rd duplicate)
+x=2 -> nums[k-2] == nums[0] == 1 != 2 -> write 2 at nums[2], k=3 -> [1,1,2,2,2,3]
+x=2 -> nums[k-2] == nums[1] == 1 != 2 -> write 2 at nums[3], k=4 -> [1,1,2,2,2,3]
+x=3 -> nums[k-2] == nums[2] == 2 != 3 -> write 3 at nums[4], k=5 -> [1,1,2,2,3,3]
+
+Result: k = 5, first k elements: [1,1,2,2,3]
+
+"""
+
+from typing import List
+
+
+class Solution:
+    def removeDuplicates(self, nums: List[int]) -> int:
+        """
+        Keep at most two duplicates in-place and return the new length k.
+        """
+        k = 0  # next write index
+        for x in nums:
+            # allow if fewer than 2 written, or x differs from nums[k-2] (prevents >2 duplicates)
+            if k < 2 or x != nums[k - 2]:
+                nums[k] = x
+                k += 1
+        return k
+
+
+if __name__ == "__main__":
+    # quick tests for revision
+    sol = Solution()
+
+    arr1 = [1, 1, 1, 2, 2, 3]
+    k1 = sol.removeDuplicates(arr1)
+    print("k =", k1, "arr =", arr1[:k1])  # expected: k=5, arr=[1,1,2,2,3]
+
+    arr2 = [0,0,1,1,1,1,2,3,3]
+    k2 = sol.removeDuplicates(arr2)
+    print("k =", k2, "arr =", arr2[:k2])  # expected: k=7, arr=[0,0,1,1,2,3,3]
+
+    arr3 = []
+    k3 = sol.removeDuplicates(arr3)
+    print("k =", k3, "arr =", arr3[:k3])  # expected: k=0, arr=[]
+
+    arr4 = [1,1]
+    k4 = sol.removeDuplicates(arr4)
+    print("k =", k4, "arr =", arr4[:k4])  # expected: k=2, arr=[1,1]
