@@ -2,7 +2,7 @@
 LeetCode: 1339. Maximum Product of Splitted Binary Tree (Medium)
 Problem link: https://leetcode.com/problems/maximum-product-of-splitted-binary-tree/
 Author: Aditya Pandey
-Date: 2025-12-30
+Date: 2025-01-07
 
 Problem:
 Given the root of a binary tree, split the tree into two subtrees by removing
