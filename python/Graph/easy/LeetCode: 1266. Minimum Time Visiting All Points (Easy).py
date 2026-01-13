@@ -2,7 +2,7 @@
 LeetCode: 1266. Minimum Time Visiting All Points (Easy)
 Problem link: https://leetcode.com/problems/minimum-time-visiting-all-points/
 Author: Aditya Pandey
-Date: 2026-01-09
+Date: 2026-01-13
 
 Problem:
 You are given a list of points on a 2D plane.
