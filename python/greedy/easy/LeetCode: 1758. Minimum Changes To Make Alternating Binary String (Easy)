@@ -1,0 +1,96 @@
+"""
+LeetCode: 1758. Minimum Changes To Make Alternating Binary String (Easy)
+Problem Link: https://leetcode.com/problems/minimum-changes-to-make-alternating-binary-string/
+Author: Aditya Pandey
+Date: 2026-02-28
+
+Problem:
+Given a binary string s, return the minimum number of operations needed to make s
+alternating (no two adjacent characters are equal). In one operation you can change
+any character from '0' to '1' or from '1' to '0'.
+
+An alternating string can be either:
+ - "010101..." (starts with 0)
+ - "101010..." (starts with 1)
+
+------------------------------------------------------------
+Pattern:
+Greedy / String simulation (count mismatches against two templates)
+
+------------------------------------------------------------
+Approach (how it works):
+- There are exactly two target alternating strings for a given length:
+    pattern0 = "0101..." (starts with 0)
+    pattern1 = "1010..." (starts with 1)
+- For each position i, check s[i] against both patterns.
+  Count mismatches for pattern0 and pattern1.
+- The minimum number of flips required is min(mismatches_pattern0, mismatches_pattern1).
+
+This can be done in one pass: maintain the expected bit for both patterns and
+toggle them as we move to the next character.
+
+------------------------------------------------------------
+Why this is optimal:
+- Each mismatch requires exactly one flip; decisions at each index are independent.
+- Comparing against both fixed patterns and taking the minimum is enough.
+
+------------------------------------------------------------
+Time Complexity: O(n) where n = len(s)
+Space Complexity: O(1) extra space
+
+------------------------------------------------------------
+Common pitfalls:
+- Confusing which pattern corresponds to starting bit 0 vs 1.
+- Off-by-one toggling of expected bits.
+- Returning the larger count instead of the smaller one.
+
+------------------------------------------------------------
+Code (one-pass, constant space)
+"""
+from typing import List
+
+
+class Solution:
+    def minOperations(self, s: str) -> int:
+        """
+        Count mismatches to the two possible alternating patterns:
+        pattern starting with '0' and pattern starting with '1'.
+        Return the minimum mismatches (flips).
+        """
+        # expected bits for patterns:
+        # exp0 = expected bit for pattern starting with '0' (0,1,0,1,...)
+        # exp1 = expected bit for pattern starting with '1' (1,0,1,0,...)
+        exp0, exp1 = 0, 1
+        flip0, flip1 = 0, 0
+
+        for ch in s:
+            bit = ord(ch) - ord('0')
+            if bit != exp0:
+                flip0 += 1
+            if bit != exp1:
+                flip1 += 1
+            # toggle expectations for next index
+            exp0 ^= 1
+            exp1 ^= 1
+
+        return min(flip0, flip1)
+
+
+# -----------------------
+# Quick tests for local verification
+# -----------------------
+if __name__ == "__main__":
+    sol = Solution()
+    tests = [
+        ("0100", 1),     # change last '0'->'1' to get "0101"
+        ("10", 0),       # already alternating "10"
+        ("1111", 2),     # flip two characters to get "1010" or "0101"
+        ("0", 0),        # single char is already alternating
+        ("01", 0),
+        ("0011", 2),
+        ("010101", 0),
+        ("101010", 0),
+    ]
+    for s, expected in tests:
+        out = sol.minOperations(s)
+        print(f"{s!r} -> {out} (expected: {expected})")
