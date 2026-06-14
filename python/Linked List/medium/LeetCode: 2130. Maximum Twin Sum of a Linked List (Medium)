@@ -1,0 +1,147 @@
+"""
+LeetCode: 2130. Maximum Twin Sum of a Linked List (Medium)
+Problem Link: https://leetcode.com/problems/maximum-twin-sum-of-a-linked-list/
+Author: Aditya Pandey
+Date: 2026-06-14
+
+------------------------------------------------------------
+Problem:
+You are given the head of an even-length linked list.
+
+For a linked list of length n, the twin of the i-th node is the
+(n - 1 - i)-th node.
+
+The twin sum of a pair is:
+    node[i].val + node[n - 1 - i].val
+
+Return the maximum twin sum among all twin pairs.
+
+------------------------------------------------------------
+Pattern:
+Linked List + Fast/Slow Pointer + In-place Reversal
+
+------------------------------------------------------------
+Approach:
+We solve the problem in 3 steps:
+
+1. Find the middle of the linked list using slow and fast pointers.
+   - slow moves 1 step
+   - fast moves 2 steps
+
+2. Reverse the second half of the linked list.
+   - After reversal, the second half can be traversed from the middle
+     toward the end in reverse order.
+
+3. Compare the first half and reversed second half node by node.
+   - Compute twin sums
+   - Track the maximum sum
+
+------------------------------------------------------------
+Why this works:
+The list is even-length, so after reaching the middle:
+- the first half contains the left twin nodes
+- the reversed second half contains the right twin nodes in matching order
+
+So we can compare nodes one by one directly.
+
+------------------------------------------------------------
+Time Complexity:
+O(n)
+
+- Finding middle: O(n)
+- Reversing second half: O(n)
+- Comparing halves: O(n)
+
+------------------------------------------------------------
+Space Complexity:
+O(1)
+
+We reverse the list in-place and do not use extra arrays or stacks.
+
+------------------------------------------------------------
+Things to Pay Attention To:
+- The list length is even
+- Reverse only the second half
+- Do not forget to compare node values in order
+- Use `-inf` or a very small number for initial result
+- This is an in-place solution, so the list gets modified
+
+------------------------------------------------------------
+Common Mistakes:
+- Using a stack/array instead of in-place reversal
+- Reversing the wrong half
+- Forgetting to move fast pointer by 2 steps
+- Comparing wrong nodes after reversal
+- Not initializing the answer properly
+------------------------------------------------------------
+"""
+
+from typing import Optional
+
+
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+
+
+class Solution:
+    def pairSum(self, head: Optional[ListNode]) -> int:
+        slow, fast = head, head
+
+        # Find middle
+        while fast and fast.next:
+            slow = slow.next
+            fast = fast.next.next
+
+        # Reverse second half
+        prev = None
+        current = slow
+
+        while current:
+            nxt = current.next
+            current.next = prev
+            prev = current
+            current = nxt
+
+        # Compare first half and reversed second half
+        first_head = head
+        second_head = prev
+        res = -float('inf')
+
+        while first_head and second_head:
+            res = max(res, first_head.val + second_head.val)
+            first_head = first_head.next
+            second_head = second_head.next
+
+        return res
+
+
+# -----------------------
+# Quick tests for local verification
+# -----------------------
+if __name__ == "__main__":
+    class ListNode:
+        def __init__(self, val=0, next=None):
+            self.val = val
+            self.next = next
+
+    def build_list(vals):
+        dummy = ListNode(0)
+        cur = dummy
+        for v in vals:
+            cur.next = ListNode(v)
+            cur = cur.next
+        return dummy.next
+
+    sol = Solution()
+
+    head = build_list([5, 4, 2, 1])
+    print(sol.pairSum(head))  # Expected: 6
+
+    head = build_list([4, 2, 2, 3])
+    print(sol.pairSum(head))  # Expected: 7
+
+    head = build_list([1, 100000])
+    print(sol.pairSum(head))  # Expected: 100001
